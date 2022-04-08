@@ -20,7 +20,7 @@ current_dir = Path(__file__).absolute().parent
 def get_version() -> str:
     version_file = current_dir / "image2base64" / "__init__.py"
     with version_file.open(encoding="utf-8") as f:
-        return re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M)[1].group(1)  # type: ignore
+        return re.search(r'^__version__ = [\'"]([^\'"]*)[\'"]', f.read(), re.M).group(1)  # type: ignore
 
 
 # What packages are required for this module to be executed?
