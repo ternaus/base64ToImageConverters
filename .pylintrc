@@ -75,7 +75,8 @@ disable=missing-module-docstring,
         too-many-instance-attributes,
         no-else-return,
         no-name-in-module,
-        too-many-lines
+        too-many-lines,
+        redefined-outer-name
 
 
 # Enable the message, report, category or checker with the given id(s). You can

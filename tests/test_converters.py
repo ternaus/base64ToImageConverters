@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from base64_image_converters.converters import (
+from image2base64.converters import (
     base64_to_grayscale,
     base64_to_rgb,
     grayscale2base64,
