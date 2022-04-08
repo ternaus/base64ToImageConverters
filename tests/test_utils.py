@@ -1,6 +1,6 @@
 import numpy as np
 
-from base64_image_converters.utils import is_grayscale
+from image2base64.utils import is_grayscale
 
 
 def test_is_grayscale():
