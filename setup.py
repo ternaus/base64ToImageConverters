@@ -2,7 +2,7 @@ from pathlib import Path
 
 import setuptools
 
-PACKAGE_NAME = "image_to_base64"
+PACKAGE_NAME = "base64_to_image"
 VERSION = "0.0.1"
 AUTHOR = "Vladimir Iglovikov"
 DESCRIPTION = "Image to base64 and back."
