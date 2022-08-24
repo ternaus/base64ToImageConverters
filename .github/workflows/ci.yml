@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.8, 3.9]
+        python-version: [3.6, 3.8, 3.9, 3.10]
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
@@ -22,16 +22,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements_dev.txt
-      - name: Run black
-        run: black --check .
-      - name: Run flake8
-        run: flake8
-      - name: Run pylint
-        run: pylint image2base64
-      - name: Run isort
-        run: isort --profile black image2base64
-      - name: Run Mypy
-        run: mypy image2base64
+      - name: Run pre-commit checks
+        run: pre-commit run --all-files -a
       - name: tests
         run: |
          pip install .[tests]

@@ -1,12 +1,7 @@
 import numpy as np
 import pytest
 
-from image2base64.converters import (
-    base64_to_grayscale,
-    base64_to_rgb,
-    grayscale2base64,
-    rgb2base64,
-)
+from image2base64.converters import base64_to_grayscale, base64_to_rgb, grayscale2base64, rgb2base64
 
 
 @pytest.mark.parametrize("image_format", ["PNG"])
