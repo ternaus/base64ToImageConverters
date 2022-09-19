@@ -6,6 +6,7 @@ pip install -U image_to_base_64
 ```
 
 ## Conversion
+Takes `numpy.array` or `PIL.Image` as input
 
 ### RGB to base 64
 ```python

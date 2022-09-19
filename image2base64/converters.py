@@ -11,10 +11,15 @@ def output_type_check(output_type: str) -> None:
         raise ValueError(f"output_type should be cv2 or PIL, not {output_type}")
 
 
-def image2base64(image: np.ndarray, image_format: str = "JPEG", quality: int = 100) -> str:
-    buffered = io.BytesIO()
+def image2base64(image: Union[np.ndarray, Image.Image], image_format: str = "JPEG", quality: int = 100) -> str:
+    if isinstance(image, np.ndarray):
+        im = Image.fromarray(image)
+    elif isinstance(image, Image.Image):
+        im = image
+    else:
+        raise ValueError(f"image should be np.ndarray or PIL.Image, not {type(image)}")
 
-    im = Image.fromarray(image)
+    buffered = io.BytesIO()
     im.save(buffered, format=image_format, quality=quality)
     return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
@@ -34,6 +39,7 @@ def base64_to_image(image_base64: str, mode: str = "RGB", output_type: str = "cv
     output_type_check(output_type)
 
     image_pil = Image.open(io.BytesIO(base64.b64decode(image_base64))).convert(mode)
+
     if output_type == "PIL":
         return image_pil
 
@@ -50,9 +56,9 @@ def base64_to_grayscale(image_base64: str, output_type: str = "cv2") -> Union[np
     return base64_to_image(image_base64, "L", output_type)
 
 
-def rgb2base64(image: np.ndarray, image_format: str = "JPEG", quality: int = 100) -> str:
+def rgb2base64(image: Union[np.ndarray, Image.Image], image_format: str = "JPEG", quality: int = 100) -> str:
     return image2base64(image, image_format, quality)
 
 
-def grayscale2base64(image: np.ndarray, quality: int = 100) -> str:
+def grayscale2base64(image: Union[np.ndarray, Image.Image], quality: int = 100) -> str:
     return image2base64(image, image_format="PNG", quality=quality)
