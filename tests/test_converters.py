@@ -3,48 +3,49 @@ import pytest
 
 from image2base64.converters import base64_to_grayscale, base64_to_rgb, grayscale2base64, rgb2base64
 
-
-@pytest.mark.parametrize("image_format", ["PNG"])
-def test_rgb_cv2(image_format):
-    rgb_image = np.random.randint(0, 255, (13, 79, 3), dtype=np.uint8)
-    base64 = rgb2base64(rgb_image, image_format)
-
-    converted_image = base64_to_rgb(base64, output_type="cv2")
-
-    assert converted_image.shape == rgb_image.shape
-
-    assert np.allclose(converted_image.flatten(), rgb_image.flatten()), (converted_image - rgb_image).mean()
+from .conftest import grayscale_cv2_image, grayscale_pil_image, rgb_cv2_image, rgb_pil_image
 
 
-@pytest.mark.parametrize("image_format", ["PNG"])
-def test_rgb_pil(image_format):
-    rgb_image = np.random.randint(0, 255, (13, 79, 3), dtype=np.uint8)
-    base64 = rgb2base64(rgb_image, image_format)
+def get_converted_image(image_format, image):
+    if isinstance(image, np.ndarray):
+        image_shape = image.shape
+    else:
+        image_width, image_height = image.size
+        if image.mode == "RGB":
+            image_shape = (image_height, image_width, 3)
+        else:
+            image_shape = (image_height, image_width)
 
-    converted_image = base64_to_rgb(base64, output_type="PIL")
+    if len(image_shape) == 3:
+        base64 = rgb2base64(image, image_format)
+        converted_image = base64_to_rgb(base64, output_type="cv2")
+    else:
+        base64 = grayscale2base64(image)
+        converted_image = base64_to_grayscale(base64, output_type="cv2")
 
-    assert converted_image.size == rgb_image.shape[:2][::-1]
-
-    assert np.allclose(np.array(converted_image).flatten(), rgb_image.flatten()), (converted_image - rgb_image).mean()
-
-
-def test_grayscale_cv2():
-    grayscale_image = np.random.randint(0, 255, (13, 79), dtype=np.uint8)
-
-    base64 = grayscale2base64(grayscale_image)
-    converted_image = base64_to_grayscale(base64, output_type="cv2")
-
-    assert converted_image.shape == grayscale_image.shape
-
-    assert np.allclose(converted_image.flatten(), grayscale_image.flatten())
+    return converted_image, image_shape
 
 
-def test_grayscale():
-    grayscale_image = np.random.randint(0, 255, (13, 79), dtype=np.uint8)
+@pytest.mark.parametrize(
+    ["image_format", "image"],
+    [("PNG", rgb_cv2_image), ("PNG", rgb_pil_image), ("PNG", grayscale_cv2_image), ("PNG", grayscale_pil_image)],
+)
+def test_to_cv2(image_format, image):
+    converted_image, image_shape = get_converted_image(image_format, image)
 
-    base64 = grayscale2base64(grayscale_image)
-    converted_image = base64_to_grayscale(base64, output_type="PIL")
+    assert converted_image.shape == image_shape
+    assert np.allclose(converted_image.flatten(), np.array(image).flatten()), (converted_image - np.array(image)).mean()
 
-    assert converted_image.size == grayscale_image.shape[::-1]
 
-    assert np.allclose(np.array(converted_image).flatten(), grayscale_image.flatten())
+@pytest.mark.parametrize(
+    ["image_format", "image"],
+    [("PNG", rgb_cv2_image), ("PNG", rgb_pil_image), ("PNG", grayscale_cv2_image), ("PNG", grayscale_pil_image)],
+)
+def test_to_pil(image_format, image):
+    converted_image, image_shape = get_converted_image(image_format, image)
+
+    assert converted_image.shape == image_shape
+
+    assert np.allclose(np.array(converted_image).flatten(), np.array(image).flatten()), (
+        np.array(converted_image) - np.array(image)
+    ).mean()

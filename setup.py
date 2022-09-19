@@ -101,7 +101,6 @@ setup(
     install_requires=required,
     extras_require=extras,
     classifiers=[
-        "License :: OSI Approved :: MIT License",
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Operating System :: OS Independent",
